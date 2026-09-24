@@ -6,13 +6,13 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE IF NOT EXISTS student (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT NOT NULL UNIQUE,
-  full_name TEXT NOT NULL,
+  full_name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS staff (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT NOT NULL UNIQUE,
-  full_name TEXT NOT NULL,
+  full_name TEXT NOT NULL
 );
 
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS issue (
   resolved_at TIMESTAMPTZ NULL DEFAULT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_issue_stid ON issue(stid);
+CREATE INDEX IF NOT EXISTS idx_issue_reporter_id ON issue(reporter_id);
 
 CREATE TABLE IF NOT EXISTS upvotes (
   id SERIAL PRIMARY KEY,
