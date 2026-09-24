@@ -1,12 +1,11 @@
 import os
-from contextlib import asynccontextmanager
-from pathlib import Path
 
-import psycopg
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from psycopg.rows import dict_row
+
+from backend.auth.router import router as auth_router
+from backend.db import get_connection
 
 
 load_dotenv()
@@ -15,7 +14,6 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql://hackathon:hackathon@localhost:5432/hackathon",
 )
-SCHEMA_PATH = Path(__file__).parent / "sql" / "schema.sql"
 
 
 class IssueCreate(BaseModel):
@@ -23,22 +21,8 @@ class IssueCreate(BaseModel):
     description: str
 
 
-def get_connection():
-    return psycopg.connect(DATABASE_URL, row_factory=dict_row)
-
-
-def initialize_database():
-    with get_connection() as connection:
-        connection.execute(SCHEMA_PATH.read_text())
-
-
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    initialize_database()
-    yield
-
-
-app = FastAPI(title="Student Issue API", lifespan=lifespan)
+app = FastAPI(title="Student Issue API")
+app.include_router(auth_router)
 
 
 @app.get("/api/health")

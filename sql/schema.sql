@@ -3,12 +3,24 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM ('student', 'staff');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE issue_status AS ENUM ('open', 'in_progress', 'resolved');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT NOT NULL UNIQUE,
   full_name TEXT NOT NULL,
   password_hash TEXT NOT NULL,
-  role ENUM ('student', 'staff') NOT NULL DEFAULT 'student',
+  role user_role NOT NULL DEFAULT 'student',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -21,7 +33,7 @@ CREATE TABLE IF NOT EXISTS issues (
   category VARCHAR(100) NOT NULL,
   location VARCHAR(100) NOT NULL,
   image_url VARCHAR NULL,
-  status ENUM('open', 'in_progress', 'resolved') NOT NULL DEFAULT 'open',
+  status issue_status NOT NULL DEFAULT 'open',
   created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   assigned_to UUID REFERENCES users(id) ON DELETE SET NULL,

@@ -2,3 +2,5 @@ fastapi
 psycopg[binary]
 python-dotenv
 uvicorn[standard]
+bcrypt
+PyJWT
