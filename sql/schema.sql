@@ -1,0 +1,38 @@
+
+BEGIN;
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE IF NOT EXISTS student (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL UNIQUE,
+  full_name TEXT NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS staff (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL UNIQUE,
+  full_name TEXT NOT NULL,
+);
+
+
+CREATE TABLE IF NOT EXISTS issue (
+  id SERIAL PRIMARY KEY,
+  reporter_id UUID NOT NULL REFERENCES student(id) ON DELETE CASCADE,
+  description TEXT NOT NULL,
+  upvote_count INTEGER NOT NULL DEFAULT 0,
+  is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  resolved_at TIMESTAMPTZ NULL DEFAULT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_issue_stid ON issue(stid);
+
+CREATE TABLE IF NOT EXISTS upvotes (
+  id SERIAL PRIMARY KEY,
+  student_id UUID NOT NULL REFERENCES student(id) ON DELETE CASCADE,
+  issue_id INTEGER NOT NULL REFERENCES issue(id) ON DELETE CASCADE,
+  UNIQUE (student_id, issue_id)
+);
+
+COMMIT;
