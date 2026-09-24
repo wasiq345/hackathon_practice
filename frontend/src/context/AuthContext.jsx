@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
 
     const login = async (email, password) => {
         // Temporary frontend authentication.
-        // Replace this with your FastAPI login endpoint later.
+        // we have to Replace this with your FastAPI login endpoint later.
 
         const isStaff = email.toLowerCase().includes("staff");
 
