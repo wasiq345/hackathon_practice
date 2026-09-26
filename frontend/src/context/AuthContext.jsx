@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+import { api } from "../services/api";
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -36,12 +38,7 @@ export function AuthProvider({ children }) {
     };
 
     const register = async (name, email, password) => {
-        const newUser = {
-            id: Date.now(),
-            name,
-            email,
-            role: "student",
-        };
+        const newUser = await api.register({ name, email, password });
 
         setUser(newUser);
 
