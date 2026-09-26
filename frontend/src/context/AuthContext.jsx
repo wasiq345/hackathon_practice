@@ -25,12 +25,7 @@ export function AuthProvider({ children }) {
 
         const isStaff = email.toLowerCase().includes("staff");
 
-        const loggedInUser = {
-            id: isStaff ? 2 : 1,
-            name: isStaff ? "Daria Staff" : "Ali Khan",
-            email,
-            role: isStaff ? "staff" : "student",
-        };
+        const loggedInUser = await api.login({ email, password, isStaff });
 
         setUser(loggedInUser);
 
