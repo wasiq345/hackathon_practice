@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 
 import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
+import Topbar from "./TopBar";
 
 export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
