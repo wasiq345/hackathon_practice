@@ -20,16 +20,12 @@ export function AuthProvider({ children }) {
     }, [user]);
 
     const login = async (email, password) => {
-        // Temporary frontend authentication.
-        // we have to Replace this with your FastAPI login endpoint later.
+        const response = await api.login({ email, password });
+        localStorage.setItem("access_token", response.access_token);
 
-        const isStaff = email.toLowerCase().includes("staff");
+        setUser(response.user);
 
-        const loggedInUser = await api.login({ email, password, isStaff });
-
-        setUser(loggedInUser);
-
-        return loggedInUser;
+        return response.user;
     };
 
     const register = async (name, email, password) => {
@@ -41,6 +37,7 @@ export function AuthProvider({ children }) {
     };
 
     const logout = () => {
+        localStorage.removeItem("access_token");
         setUser(null);
     };
 
