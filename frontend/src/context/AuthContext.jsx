@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+import { api } from "../services/api";
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -18,30 +20,16 @@ export function AuthProvider({ children }) {
     }, [user]);
 
     const login = async (email, password) => {
-        // Temporary frontend authentication.
-        // we have to Replace this with your FastAPI login endpoint later.
+        const response = await api.login({ email, password });
+        localStorage.setItem("access_token", response.access_token);
 
-        const isStaff = email.toLowerCase().includes("staff");
+        setUser(response.user);
 
-        const loggedInUser = {
-            id: isStaff ? 2 : 1,
-            name: isStaff ? "Daria Staff" : "Ali Khan",
-            email,
-            role: isStaff ? "staff" : "student",
-        };
-
-        setUser(loggedInUser);
-
-        return loggedInUser;
+        return response.user;
     };
 
     const register = async (name, email, password) => {
-        const newUser = {
-            id: Date.now(),
-            name,
-            email,
-            role: "student",
-        };
+        const newUser = await api.register({ name, email, password });
 
         setUser(newUser);
 
@@ -49,6 +37,7 @@ export function AuthProvider({ children }) {
     };
 
     const logout = () => {
+        localStorage.removeItem("access_token");
         setUser(null);
     };
 

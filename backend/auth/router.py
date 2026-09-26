@@ -70,7 +70,6 @@ def register(request: RegisterRequest):
 @router.post("/login", response_model=LoginResponse)
 def login(request: LoginRequest):
     email = normalize_email(request.email)
-
     with get_connection() as connection:
         user = connection.execute(
             """
@@ -90,7 +89,6 @@ def login(request: LoginRequest):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=INVALID_CREDENTIALS,
         )
-
     return {
         "access_token": create_access_token(user["id"], str(user["role"])),
         "token_type": "bearer",
